@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "AspNetFrameworkV4.8\\AspNetFrameworkV4.8.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "WebApi\\WebApi.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
