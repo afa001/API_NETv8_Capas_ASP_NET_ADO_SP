@@ -5,30 +5,30 @@ using WebApi.Models;
 [ApiController]
 public class TipoClienteController : ControllerBase
 {
-    //private readonly ICatTipoClienteService _catTipoClienteService;
+    private readonly ICatTipoClienteService _catTipoClienteService;
 
-    //public TipoClienteController(ICatTipoClienteService catTipoClienteService)
-    //{
-    //    _catTipoClienteService = catTipoClienteService;
-    //}
+    public TipoClienteController(ICatTipoClienteService catTipoClienteService)
+    {
+        _catTipoClienteService = catTipoClienteService;
+    }
 
-    //[HttpGet]
-    //public IActionResult GetAllTipoClientes()
-    //{
-    //    var tipoClientes = _catTipoClienteService.GetAllTiposCliente();
-    //    return Ok(tipoClientes);
-    //}
+    [HttpGet]
+    public IActionResult GetAllTipoClientes()
+    {
+        var tipoClientes = _catTipoClienteService.GetAllTiposCliente();
+        return Ok(tipoClientes);
+    }
 
-    //[HttpGet("{id}")]
-    //public IActionResult GetTipoClienteById(int id)
-    //{
-    //    var tipoCliente = _catTipoClienteService.GetTipoClienteById(id);
-    //    if (tipoCliente == null)
-    //    {
-    //        return NotFound();
-    //    }
-    //    return Ok(tipoCliente);
-    //}
+    [HttpGet("{id}")]
+    public IActionResult GetTipoClienteById(int id)
+    {
+        var tipoCliente = _catTipoClienteService.GetTipoClienteById(id);
+        if (tipoCliente == null)
+        {
+            return NotFound();
+        }
+        return Ok(tipoCliente);
+    }
 
     //[HttpPost]
     //public IActionResult AddTipoCliente(CatTipoCliente tipoCliente)

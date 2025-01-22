@@ -1,143 +1,94 @@
+using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using WebApi.Models;
 
 public class CatTipoClienteRepository : ICatTipoClienteRepository
 {
-    //private readonly SqlConnection _connection;
+    //private readonly SqlConnection _connectionString;
 
-    //public CatTipoClienteRepository(SqlConnection connection)
-    //{
-    //    _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-    //}
+    private readonly string _connectionString;
 
-    //public IEnumerable<CatTipoCliente> GetAll()
-    //{
-    //    List<CatTipoCliente> tiposCliente = new List<CatTipoCliente>();
+    public CatTipoClienteRepository(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("DefaultConnection");
+    }
 
-    //    string query = "SELECT * FROM CatTipoCliente";
+    public IEnumerable<CatTipoCliente> GetAll()
+    {
+        List<CatTipoCliente> tiposCliente = new List<CatTipoCliente>();
 
-    //    try
-    //    {
-    //        using (SqlCommand command = new SqlCommand(query, _connection))
-    //        {
-    //            _connection.Open();
-    //            using (SqlDataReader reader = command.ExecuteReader())
-    //            {
-    //                while (reader.Read())
-    //                {
-    //                    tiposCliente.Add(new CatTipoCliente
-    //                    {
-    //                        Id = Convert.ToInt32(reader["Id"]),
-    //                        TipoCliente = reader["TipoCliente"].ToString()
-    //                    });
-    //                }
-    //            }
-    //        }
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            try
+            {
+                using (SqlCommand command = new SqlCommand("GetAlltiposCliente", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
 
-    //        return tiposCliente;
-    //    }
-    //    finally
-    //    {
-    //        if (_connection != null)
-    //        {
-    //            _connection.Close();
-    //        }
-    //    }
-    //}
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            tiposCliente.Add(new CatTipoCliente
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+                                TipoCliente = Convert.ToString(reader["TipoCliente"])
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (connection != null && connection.State != ConnectionState.Closed)
+                {
+                    connection.Close();
+                }
+            }
+        }
 
-    //public CatTipoCliente GetById(int id)
-    //{
-    //    CatTipoCliente tipoCliente = null;
+        return tiposCliente;
+    }
 
-    //    try
-    //    {
-    //        using (SqlCommand command = new SqlCommand("SELECT * FROM CatTipoCliente WHERE Id = @Id", _connection))
-    //        {
-    //            command.Parameters.AddWithValue("@Id", id);
-    //            _connection.Open();
-    //            SqlDataReader reader = command.ExecuteReader();
-    //            if (reader.Read())
-    //            {
-    //                tipoCliente = new CatTipoCliente
-    //                {
-    //                    Id = Convert.ToInt32(reader["Id"]),
-    //                    TipoCliente = reader["TipoCliente"].ToString()
-    //                };
-    //            }
-    //            reader.Close();
-    //        }
+    public CatTipoCliente GetById(int id)
+    {
+        CatTipoCliente tipoCliente = null;
 
-    //        return tipoCliente;
-    //    }
-    //    finally
-    //    {
-    //        if (_connection != null)
-    //        {
-    //            _connection.Close();
-    //        }
-    //    }
-    //}
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            try
+            {
+                using (SqlCommand command = new SqlCommand("GetTipoClienteById", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
 
-    //public void Add(CatTipoCliente tipoCliente)
-    //{
-    //    try
-    //    {
-    //        using (SqlCommand command = new SqlCommand("INSERT INTO CatTipoCliente (TipoCliente) VALUES (@TipoCliente)", _connection))
-    //        {
-    //            command.Parameters.AddWithValue("@TipoCliente", tipoCliente.TipoCliente);
+                    connection.Open();
 
-    //            _connection.Open();
-    //            command.ExecuteNonQuery();
-    //        }
-    //    }
-    //    finally
-    //    {
-    //        if (_connection != null)
-    //        {
-    //            _connection.Close();
-    //        }
-    //    }
-    //}
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            tipoCliente = new CatTipoCliente
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+                                TipoCliente = Convert.ToString(reader["TipoCliente"])
+                            };
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (connection != null && connection.State != ConnectionState.Closed)
+                {
+                    connection.Close();
+                }
+            }
+        }
 
-    //public void Update(CatTipoCliente tipoCliente)
-    //{
-    //    try
-    //    {
-    //        using (SqlCommand command = new SqlCommand("UPDATE CatTipoCliente SET TipoCliente = @TipoCliente WHERE Id = @Id", _connection))
-    //        {
-    //            command.Parameters.AddWithValue("@Id", tipoCliente.Id);
-    //            command.Parameters.AddWithValue("@TipoCliente", tipoCliente.TipoCliente);
-
-    //            _connection.Open();
-    //            command.ExecuteNonQuery();
-    //        }
-    //    }
-    //    finally
-    //    {
-    //        if (_connection != null)
-    //        {
-    //            _connection.Close();
-    //        }
-    //    }
-    //}
-
-    //public void Delete(int id)
-    //{
-    //    try
-    //    {
-    //        using (SqlCommand command = new SqlCommand("DELETE FROM CatTipoCliente WHERE Id = @Id", _connection))
-    //        {
-    //            command.Parameters.AddWithValue("@Id", id);
-    //            _connection.Open();
-    //            command.ExecuteNonQuery();
-    //        }
-    //    }
-    //    finally
-    //    {
-    //        if (_connection != null)
-    //        {
-    //            _connection.Close();
-    //        }
-    //    }
-    //}
+        return tipoCliente;
+    }
 }
