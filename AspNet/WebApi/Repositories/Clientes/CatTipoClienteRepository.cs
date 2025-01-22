@@ -5,8 +5,6 @@ using WebApi.Models;
 
 public class CatTipoClienteRepository : ICatTipoClienteRepository
 {
-    //private readonly SqlConnection _connectionString;
-
     private readonly string _connectionString;
 
     public CatTipoClienteRepository(IConfiguration configuration)
