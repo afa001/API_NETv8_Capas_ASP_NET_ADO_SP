@@ -3,11 +3,15 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "AspNetFrameworkV4.8\\AspNetFrameworkV4.8.csproj",
+        "Path": "WebApi\\WebApi.csproj",
         "Action": "Start"
       },
       {
-        "Path": "WebApi\\WebApi.csproj",
+        "Path": "AspNetWebFormsV4.8\\AspNetWebFormsV4.8.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "AspNetFrameworkV4.8\\AspNetFrameworkV4.8.csproj",
         "Action": "Start"
       }
     ]
