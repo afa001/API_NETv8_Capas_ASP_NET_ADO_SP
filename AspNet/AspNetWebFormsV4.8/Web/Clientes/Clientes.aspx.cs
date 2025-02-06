@@ -13,35 +13,47 @@ namespace AspNetWebFormsV4._8.Web.Clientes
 {
     public partial class Clientes : System.Web.UI.Page
     {
-        private readonly ClientesService _clientesService = new ClientesService();
+        private readonly AuthService _authService = new AuthService();
         private readonly TipoClienteService _tipoClienteService = new TipoClienteService();
+        private readonly ClientesService _clientesService = new ClientesService();
 
+        private string _token
+        {
+            get { return Session["Token"] as string; }
+            set { Session["Token"] = value; }
+        }
 
         protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                await GetTiposClienteAsync(ddlTipoCliente);
-                await LoadClientesAsync();
+                LoginModel loginModel = new LoginModel
+                {
+                    UserName = "username",
+                    Password = "password"
+                };
+                _token = await _authService.LoginAsync(loginModel);
+                await GetTiposClienteAsync(ddlTipoCliente, _token);
+                await LoadClientesAsync(_token);
             }
         }
 
-        private async Task LoadClientesAsync()
+        private async Task LoadClientesAsync(string _token)
         {
-            var clientes = await _clientesService.GetAllClientesAsync();
+            var clientes = await _clientesService.GetAllClientesAsync(_token);
 
             foreach (var cliente in clientes)
             {
-                cliente.TipoCliente = await _tipoClienteService.GetTipoClienteByIdAsync(cliente.IdTipoCliente);
+                cliente.TipoCliente = await _tipoClienteService.GetTipoClienteByIdAsync(cliente.IdTipoCliente, _token);
             }
 
             gvClientes.DataSource = clientes;
             gvClientes.DataBind();
         }
 
-        private async Task GetTiposClienteAsync(DropDownList dropdown)
+        private async Task GetTiposClienteAsync(DropDownList dropdown,string token)
         {
-            var tiposCliente = await _tipoClienteService.GetAllTipoClientesAsync();
+            var tiposCliente = await _tipoClienteService.GetAllTipoClientesAsync(token);
 
             dropdown.DataSource = tiposCliente;
             dropdown.DataTextField = "TipoCliente";
@@ -62,22 +74,22 @@ namespace AspNetWebFormsV4._8.Web.Clientes
                 IdTipoCliente = int.Parse(ddlTipoCliente.SelectedValue)
             };
 
-            await _clientesService.AddClienteAsync(cliente);
+            await _clientesService.AddClienteAsync(cliente, _token);
             LimpiarCampos();
-            await LoadClientesAsync();
+            await LoadClientesAsync(_token);
         }
 
         protected async void gvClientes_RowDeleting(object sender, System.Web.UI.WebControls.GridViewDeleteEventArgs e)
         {
             int id = Convert.ToInt32(gvClientes.DataKeys[e.RowIndex].Value);
-            await _clientesService.DeleteClienteAsync(id);
-            await LoadClientesAsync();
+            await _clientesService.DeleteClienteAsync(id, _token);
+            await LoadClientesAsync(_token);
         }
 
         protected async void gvClientes_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvClientes.EditIndex = e.NewEditIndex;
-            await LoadClientesAsync();
+            await LoadClientesAsync(_token);
         }
 
         protected async void gvClientes_RowUpdating(object sender, GridViewUpdateEventArgs e)
@@ -98,10 +110,10 @@ namespace AspNetWebFormsV4._8.Web.Clientes
             if (ddlTipoCliente == null) return;
             cliente.IdTipoCliente = int.Parse(ddlTipoCliente.SelectedValue);
 
-            await _clientesService.UpdateClienteAsync(idRow, cliente);
+            await _clientesService.UpdateClienteAsync(idRow, cliente, _token);
 
             gvClientes.EditIndex = -1;
-            await LoadClientesAsync();
+            await LoadClientesAsync(_token);
         }
 
         protected async void gvClientes_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -113,7 +125,7 @@ namespace AspNetWebFormsV4._8.Web.Clientes
                 var ddlTipoCliente = (DropDownList)e.Row.FindControl("ddlTipoCliente");
                 if (ddlTipoCliente != null)
                 {
-                    await GetTiposClienteAsync(ddlTipoCliente);
+                    await GetTiposClienteAsync(ddlTipoCliente, _token);
 
                     // Seleccionar el valor actual del cliente
                     var tipoClienteId = DataBinder.Eval(e.Row.DataItem, "IdTipoCliente");
@@ -140,7 +152,7 @@ namespace AspNetWebFormsV4._8.Web.Clientes
         protected async void gvClientes_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
             gvClientes.EditIndex = -1;
-            await LoadClientesAsync();
+            await LoadClientesAsync(_token);
         }
 
         protected void LimpiarCampos()
