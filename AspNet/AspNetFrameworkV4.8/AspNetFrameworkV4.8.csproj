@@ -176,6 +176,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="AuthService.cs" />
+    <Compile Include="Models\AuthResponse.cs" />
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="WebServiceClientGlobal.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

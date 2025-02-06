@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web;
 using AspNetFrameworkV4._8.Models;
 
 namespace AspNetFrameworkV4._8.Controllers
@@ -30,47 +28,54 @@ namespace AspNetFrameworkV4._8.Controllers
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<List<TblClientes>> GetAllClientesAsync()
+        public async Task<List<TblClientes>> GetAllClientesAsync(string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetAsync("Clientes");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsAsync<List<TblClientes>>();
         }
 
-        public async Task<TblClientes> GetClienteByIdAsync(int id)
+        public async Task<TblClientes> GetClienteByIdAsync(int id, string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetAsync($"Clientes/{id}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsAsync<TblClientes>();
         }
 
-        public async Task AddClienteAsync(TblClientes cliente)
+        public async Task AddClienteAsync(TblClientes cliente, string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.PostAsJsonAsync("Clientes", cliente);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task UpdateClienteAsync(int id, TblClientes cliente)
+        public async Task UpdateClienteAsync(int id, TblClientes cliente, string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.PutAsJsonAsync($"Clientes/{id}", cliente);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task DeleteClienteAsync(int id)
+        public async Task DeleteClienteAsync(int id, string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.DeleteAsync($"Clientes/{id}");
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<List<CatTipoCliente>> GetAllTiposClientesAsync()
+        public async Task<List<CatTipoCliente>> GetAllTiposClientesAsync(string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetAsync("TipoCliente");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsAsync<List<CatTipoCliente>>();
         }
 
-        public async Task<CatTipoCliente> GetAllTiposClientesByIdAsync(int id)
+        public async Task<CatTipoCliente> GetAllTiposClientesByIdAsync(int id, string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetAsync($"TipoCliente/{id}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsAsync<CatTipoCliente>();
