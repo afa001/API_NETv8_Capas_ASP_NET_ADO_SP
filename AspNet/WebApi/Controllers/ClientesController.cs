@@ -4,7 +4,7 @@ using WebApi.Models;
 
 [Route("api/[controller]")]
 [ApiController]
-//[Authorize]
+[Authorize]
 public class ClientesController : ControllerBase
 {
     private readonly ITblClientesService _tblClientesService;
